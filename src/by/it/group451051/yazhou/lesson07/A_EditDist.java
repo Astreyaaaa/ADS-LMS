@@ -69,7 +69,7 @@ public class A_EditDist {
         }
 
         if (s1.charAt(i-1) == s2.charAt(j-1)){
-            mem[i][j] = 1 + calc(s1, s2, i-1, j-1, mem);
+            mem[i][j] = calc(s1, s2, i-1, j-1, mem);
         } else {
             int insert = calc(s1, s2, i, j -1 , mem) +1;
             int delete = calc(s1, s2, i - 1, j, mem) +1;
