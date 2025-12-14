@@ -59,9 +59,8 @@ public class A_Knapsack {
                 }
             }
         }
-        int result = mas[capasity];
         //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
-        return result;
+        return mas[capasity];
     }
 
 
