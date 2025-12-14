@@ -46,8 +46,19 @@ public class A_Knapsack {
             gold[i]=scanner.nextInt();
         }
 
+        int mas[] = new int [w+1];
 
-        int result = 0;
+        for (int i = 1; i <= w; i++) {
+            for (int j = 0; j < n; j++) {
+                if (gold[i] <= i) {
+                    int slitok = mas[i - gold[j]] + gold[j];
+                    if (slitok > mas[i]) {
+                        mas[i] = slitok;
+                    }
+                }
+            }
+        }
+        int result = mas[w];
         //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
         return result;
     }
@@ -55,9 +66,9 @@ public class A_Knapsack {
 
     public static void main(String[] args) throws FileNotFoundException {
         String root = System.getProperty("user.dir") + "/src/";
-        InputStream stream = new FileInputStream(root + "by/it/a_khmelev/lesson08/dataA.txt");
+        InputStream stream = new FileInputStream(root + "by/it/group451051/yazhou/lesson08/dataA.txt");
         A_Knapsack instance = new A_Knapsack();
-        int res=instance.getMaxWeight(stream);
+        int res = instance.getMaxWeight(stream);
         System.out.println(res);
     }
 }
