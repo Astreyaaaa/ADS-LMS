@@ -43,21 +43,66 @@ public class C_HeapMax {
         //Будет мало? Ну тогда можете его собрать как Generic и/или использовать в варианте B
         private List<Long> heap = new ArrayList<>();
 
-        int siftDown(int i) { //просеивание вверх
+        // Просеивание вниз (для восстановления кучи после удаления корня)
+        int siftDown(int i) {
+            int left = 2 * i + 1;
+            int right = 2 * i + 2;
+            int largest = i;
 
+            // Находим наибольший элемент среди текущего узла и его детей
+            if (left < heap.size() && heap.get(left) > heap.get(largest)) {
+                largest = left;
+            }
+            if (right < heap.size() && heap.get(right) > heap.get(largest)) {
+                largest = right;
+            }
+
+            // Если наибольший элемент не текущий, меняем их местами и продолжаем
+            if (largest != i) {
+                Long temp = heap.get(i);
+                heap.set(i, heap.get(largest));
+                heap.set(largest, temp);
+                return siftDown(largest);
+            }
             return i;
         }
 
-        int siftUp(int i) { //просеивание вниз
+        // Просеивание вверх (для восстановления кучи после добавления элемента)
+        int siftUp(int i) {
+            int parent = (i - 1) / 2;
 
+            // Если узел больше родителя, меняем их местами и продолжаем
+            if (i > 0 && heap.get(i) > heap.get(parent)) {
+                Long temp = heap.get(i);
+                heap.set(i, heap.get(parent));
+                heap.set(parent, temp);
+                return siftUp(parent);
+            }
             return i;
         }
 
-        void insert(Long value) { //вставка
+        // Вставка нового элемента
+        void insert(Long value) {
+            heap.add(value);
+            siftUp(heap.size() - 1);
         }
 
-        Long extractMax() { //извлечение и удаление максимума
-            Long result = null;
+        // Извлечение и удаление максимального элемента (корня)
+        Long extractMax() {
+            if (heap.isEmpty()) {
+                return null;
+            }
+
+            Long result = heap.get(0); // Максимальный элемент - корень
+
+            // Перемещаем последний элемент в корень и удаляем последний
+            heap.set(0, heap.get(heap.size() - 1));
+            heap.remove(heap.size() - 1);
+
+            // Восстанавливаем свойства кучи
+            if (!heap.isEmpty()) {
+                siftDown(0);
+            }
 
             return result;
         }
@@ -92,7 +137,7 @@ public class C_HeapMax {
 
     public static void main(String[] args) throws FileNotFoundException {
         String root = System.getProperty("user.dir") + "/src/";
-        InputStream stream = new FileInputStream(root + "by/it/a_khmelev/lesson03/heapData.txt");
+        InputStream stream = new FileInputStream(root + "by/it/group451051/yazhou/lesson03/heapData.txt");
         C_HeapMax instance = new C_HeapMax();
         System.out.println("MAX="+instance.findMaxValue(stream));
     }

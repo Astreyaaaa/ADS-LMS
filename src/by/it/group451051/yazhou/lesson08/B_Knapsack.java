@@ -38,8 +38,31 @@ public class B_Knapsack {
             gold[i]=scanner.nextInt();
         }
 
+        scanner.close();
 
-        int result = 0;
+    // Создаем массив для динамического программирования
+    boolean[] dp = new boolean[w + 1];
+    dp[0] = true; // нулевой вес всегда достижим
+
+    // Обрабатываем каждый слиток
+        for (int i = 0; i < n; i++) {
+        int weight = gold[i];
+        // Обрабатываем массив справа налево, чтобы избежать повторного использования одного слитка
+        for (int j = w; j >= weight; j--) {
+            if (dp[j - weight]) {
+                dp[j] = true;
+            }
+        }
+    }
+
+    // Ищем максимальный достижимый вес
+    int result = 0;
+        for (int j = w; j >= 0; j--) {
+        if (dp[j]) {
+            result = j;
+            break;
+        }
+    }
         //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
         return result;
     }
@@ -47,7 +70,7 @@ public class B_Knapsack {
 
     public static void main(String[] args) throws FileNotFoundException {
         String root = System.getProperty("user.dir") + "/src/";
-        InputStream stream = new FileInputStream(root + "by/it/a_khmelev/lesson08/dataB.txt");
+        InputStream stream = new FileInputStream(root + "by/it/group451051/yazhou/lesson08/dataB.txt");
         B_Knapsack instance = new B_Knapsack();
         int res=instance.getMaxWeight(stream);
         System.out.println(res);

@@ -36,10 +36,32 @@ public class C_GreedyKnapsack {
 
         @Override
         public int compareTo(Item o) {
-            //тут может быть ваш компаратор
+            // Альтернативный вариант - сравнить отношения напрямую
+            double thisRatio = (double) this.cost / this.weight;
+            double otherRatio = (double) o.cost / o.weight;
 
+            if (thisRatio < otherRatio) {
+                return 1;
+            } else if (thisRatio > otherRatio) {
+                return -1;
+            } else {
+                return 0;
+            }
+        }
+    }
 
-            return 0;
+    //Сортировка пузырьком
+    private void bubbleSort(Item[] items) {
+        int n = items.length;
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < n - i - 1; j++) {
+                if (items[j].compareTo(items[j + 1]) > 0) {
+                    // Меняем местами
+                    Item temp = items[j];
+                    items[j] = items[j + 1];
+                    items[j + 1] = temp;
+                }
+            }
         }
     }
 
@@ -57,18 +79,53 @@ public class C_GreedyKnapsack {
         }
         System.out.printf("Всего предметов: %d. Рюкзак вмещает %d кг.\n",n,W);
 
+        // Сортируем предметы по убыванию отношения стоимости к весу
+        //Сортировка пузырьком (самый простой)
+        bubbleSort(items);
+
+        System.out.println("\nОтсортированные предметы (по убыванию cost/weight):");
+        for (Item item:items) {
+            System.out.println(item);
+        }
+
         //тут необходимо реализовать решение задачи
         //итогом является максимально воможная стоимость вещей в рюкзаке
         //вещи можно резать на кусочки (непрерывный рюкзак)
+        //покажем предметы
+        for (Item item:items) {
+            System.out.println(item);
+        }
+        System.out.printf("Всего предметов: %d. Рюкзак вмещает %d кг.\n",n,W);
+
         double result = 0;
         //тут реализуйте алгоритм сбора рюкзака
         //будет особенно хорошо, если с собственной сортировкой
         //кроме того, можете описать свой компаратор в классе Item
         //ваше решение.
+        int remainingWeight = W;
 
+        System.out.println("\nПроцесс наполнения рюкзака:");
+        for (Item item : items) {
+            if (remainingWeight == 0) {
+                break;
+            }
 
-
-
+            if (item.weight <= remainingWeight) {
+                // Берем предмет целиком
+                result += item.cost;
+                remainingWeight -= item.weight;
+                System.out.printf("  Взяли целиком: cost=%d, weight=%d, добавлено: %d, осталось места: %d кг\n",
+                        item.cost, item.weight, item.cost, remainingWeight);
+            } else {
+                // Берем часть предмета
+                double fraction = (double) remainingWeight / item.weight;
+                double costToAdd = item.cost * fraction;
+                result += costToAdd;
+                System.out.printf("  Взяли часть: cost=%d, weight=%d, взято %.2f части, добавлено стоимости: %.2f\n",
+                        item.cost, item.weight, fraction, costToAdd);
+                remainingWeight = 0;
+            }
+        }
 
         System.out.printf("Удалось собрать рюкзак на сумму %f\n",result);
         return result;
@@ -77,7 +134,7 @@ public class C_GreedyKnapsack {
     public static void main(String[] args) throws FileNotFoundException {
         long startTime = System.currentTimeMillis();
         String root=System.getProperty("user.dir")+"/src/";
-        File f=new File(root+"by/it/a_khmelev/lesson02/greedyKnapsack.txt");
+        File f=new File(root+"by/it/group451051/yazhou/lesson02/greedyKnapsack.txt");
         double costFinal=new C_GreedyKnapsack().calc(f);
         long finishTime = System.currentTimeMillis();
         System.out.printf("Общая стоимость %f (время %d)",costFinal,finishTime - startTime);

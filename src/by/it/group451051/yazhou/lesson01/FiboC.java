@@ -22,12 +22,48 @@ public class FiboC {
     }
 
     long fasterC(long n, int m) {
-        //Решение сложно найти интуитивно
-        //возможно потребуется дополнительный поиск информации
-        //см. период Пизано
-        return 0L;
+        if (n == 0) return 0;
+        if (n == 1) return 1 % m;
+        if (m == 1) return 0;
+
+        long period = pisanoPeriod(m);
+
+        long reducedN = n % period;
+
+        return fibMod(reducedN, m);
     }
 
+    private long pisanoPeriod(int m) {
+        long prev = 0;
+        long curr = 1;
+        long period = 0;
+
+        for (int i = 0; i < m * m; i++) {
+            long temp = (prev + curr) % m;
+            prev = curr;
+            curr = temp;
+            period++;
+
+            // Pisano period starts with 0,1
+            if (prev == 0 && curr == 1) {
+                return period;
+            }
+        }
+        return period;
+    }
+
+    private long fibMod(long n, int m) {
+        if (n == 0) return 0;
+        if (n == 1) return 1 % m;
+
+        long a = 0;
+        long b = 1;
+        for (long i = 2; i <= n; i++) {
+            long c = (a + b) % m;
+            a = b;
+            b = c;
+        }
+        return b;
+    }
 
 }
-

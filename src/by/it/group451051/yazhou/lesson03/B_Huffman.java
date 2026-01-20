@@ -34,13 +34,27 @@ import java.util.Scanner;
 //        a: 0
 //        b: 10
 //        c: 110
-//        d: 111
-//        01001100100111
+    //        d: 111
+    //        01001100100111
 
 //        Sample Output 2:
 //        abacabad
 
 public class B_Huffman {
+
+    static class HuffmanNode {
+        char symbol;
+        HuffmanNode left;  // 0
+        HuffmanNode right; // 1
+
+        HuffmanNode(char symbol) {
+            this.symbol = symbol;
+        }
+
+        HuffmanNode() {
+            this.symbol = '\0';
+        }
+    }
 
     String decode(File file) throws FileNotFoundException {
         StringBuilder result=new StringBuilder();
@@ -50,17 +64,66 @@ public class B_Huffman {
         Integer length = scanner.nextInt();
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! НАЧАЛО ЗАДАЧИ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
         //тут запишите ваше решение
+        scanner.nextLine(); // переход на новую строку
 
+        // Создаем корень дерева Хаффмана
+        HuffmanNode root = new HuffmanNode();
 
+        // Построение дерева Хаффмана на основе кодов символов
+        for (int i = 0; i < count; i++) {
+            String line = scanner.nextLine();
+            String[] parts = line.split(": ");
+            char symbol = parts[0].charAt(0);
+            String code = parts[1];
 
+            // Добавляем код в дерево
+            HuffmanNode currentNode = root;
+            for (int j = 0; j < code.length(); j++) {
+                char bit = code.charAt(j);
+                if (bit == '0') {
+                    if (currentNode.left == null) {
+                        currentNode.left = new HuffmanNode();
+                    }
+                    currentNode = currentNode.left;
+                } else { // bit == '1'
+                    if (currentNode.right == null) {
+                        currentNode.right = new HuffmanNode();
+                    }
+                    currentNode = currentNode.right;
+                }
+            }
+            // В листовом узле храним символ
+            currentNode.symbol = symbol;
+        }
 
+        // Читаем закодированную строку
+        String encodedString = scanner.nextLine();
+
+        // Декодируем строку с использованием дерева
+        HuffmanNode currentNode = root;
+        for (int i = 0; i < encodedString.length(); i++) {
+            char bit = encodedString.charAt(i);
+            if (bit == '0') {
+                currentNode = currentNode.left;
+            } else { // bit == '1'
+                currentNode = currentNode.right;
+            }
+
+            // Если достигли листового узла (в нем есть символ)
+            if (currentNode.symbol != '\0') {
+                result.append(currentNode.symbol);
+                currentNode = root; // возвращаемся к корню для следующего символа
+            }
+        }
+
+        scanner.close();
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! КОНЕЦ ЗАДАЧИ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
-        return result.toString(); //01001100100111
+        return result.toString();
     }
 
     public static void main(String[] args) throws FileNotFoundException {
         String root = System.getProperty("user.dir") + "/src/";
-        File f = new File(root + "by/it/a_khmelev/lesson03/encodeHuffman.txt");
+        File f = new File(root + "by/it/group451051/yazhou/lesson03/encodeHuffman.txt");
         B_Huffman instance = new B_Huffman();
         String result = instance.decode(f);
         System.out.println(result);

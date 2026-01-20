@@ -26,7 +26,24 @@ public class FiboB {
     BigInteger fastB(Integer n) {
         //здесь нужно реализовать вариант с временем O(n) и памятью O(n)
 
+        if (n == 0) {
             return BigInteger.ZERO;
+        }
+        if (n == 1) {
+            return BigInteger.ONE;
+        }
+
+        // Создаем массив для хранения вычисленных значений
+        BigInteger[] fibNumbers = new BigInteger[n + 1];
+        fibNumbers[0] = BigInteger.ZERO;
+        fibNumbers[1] = BigInteger.ONE;
+
+        // Вычисляем числа Фибоначчи от 2 до n
+        for (int i = 2; i <= n; i++) {
+            fibNumbers[i] = fibNumbers[i - 1].add(fibNumbers[i - 2]);
+        }
+
+        return fibNumbers[n];
     }
 
 }

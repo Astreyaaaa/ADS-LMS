@@ -44,7 +44,29 @@ public class B_LongDivComSubSeq {
         }
         //тут реализуйте логику задачи методами динамического программирования (!!!)
         int result = 0;
+        // Создаем массив для хранения длин наибольших кратных подпоследовательностей,
+        // заканчивающихся в каждой позиции
+        int[] dp = new int[n];
 
+        // Инициализируем массив dp: каждая позиция сама по себе является
+        // подпоследовательностью длины 1
+        for (int i = 0; i < n; i++) {
+            dp[i] = 1;
+        }
+
+        // Заполняем массив dp
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < i; j++) {
+                // Проверяем, делится ли текущий элемент на предыдущий
+                if (m[i] % m[j] == 0) {
+                    // Если делится, то можем добавить текущий элемент к подпоследовательности,
+                    // заканчивающейся в позиции j
+                    dp[i] = Math.max(dp[i], dp[j] + 1);
+                }
+            }
+            // Обновляем результат максимальной длиной
+            result = Math.max(result, dp[i]);
+        }
 
         //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
         return result;
@@ -53,7 +75,7 @@ public class B_LongDivComSubSeq {
 
     public static void main(String[] args) throws FileNotFoundException {
         String root = System.getProperty("user.dir") + "/src/";
-        InputStream stream = new FileInputStream(root + "by/it/a_khmelev/lesson06/dataB.txt");
+        InputStream stream = new FileInputStream(root + "by/it/group451051/yazhou/lesson06/dataB.txt");
         B_LongDivComSubSeq instance = new B_LongDivComSubSeq();
         int result = instance.getDivSeqSize(stream);
         System.out.print(result);

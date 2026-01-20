@@ -51,17 +51,71 @@ public class C_EditDist {
 
     String getDistanceEdinting(String one, String two) {
         //!!!!!!!!!!!!!!!!!!!!!!!!!     НАЧАЛО ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
+        int m = one.length();
+        int n = two.length();
 
+        // Матрица для хранения расстояний
+        int[][] dp = new int[m + 1][n + 1];
 
-        String result = "";
-        //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
-        return result;
+        // Инициализация базовых случаев
+        for (int i = 0; i <= m; i++) {
+            dp[i][0] = i; // Удаление всех символов первой строки
+        }
+        for (int j = 0; j <= n; j++) {
+            dp[0][j] = j; // Вставка всех символов второй строки
+        }
+
+        // Заполнение матрицы
+        for (int i = 1; i <= m; i++) {
+            for (int j = 1; j <= n; j++) {
+                if (one.charAt(i - 1) == two.charAt(j - 1)) {
+                    dp[i][j] = dp[i - 1][j - 1]; // Совпадение
+                } else {
+                    dp[i][j] = Math.min(
+                            dp[i - 1][j] + 1,     // Удаление
+                            Math.min(
+                                    dp[i][j - 1] + 1, // Вставка
+                                    dp[i - 1][j - 1] + 1 // Замена
+                            )
+                    );
+                }
+            }
+        }
+
+        // Восстановление редакционного предписания
+        StringBuilder result = new StringBuilder();
+        int i = m, j = n;
+
+        while (i > 0 || j > 0) {
+            if (i > 0 && j > 0 && one.charAt(i - 1) == two.charAt(j - 1)) {
+                // Совпадение
+                result.insert(0, "#,");
+                i--;
+                j--;
+            } else if (i > 0 && j > 0 && dp[i][j] == dp[i - 1][j - 1] + 1) {
+                // Замена
+                result.insert(0, "~" + two.charAt(j - 1) + ",");
+                i--;
+                j--;
+            } else if (j > 0 && dp[i][j] == dp[i][j - 1] + 1) {
+                // Вставка
+                result.insert(0, "+" + two.charAt(j - 1) + ",");
+                j--;
+            } else if (i > 0 && dp[i][j] == dp[i - 1][j] + 1) {
+                // Удаление
+                result.insert(0, "-" + one.charAt(i - 1) + ",");
+                i--;
+            }
+        }
+
+        return result.toString();
     }
+        //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
     public static void main(String[] args) throws FileNotFoundException {
         String root = System.getProperty("user.dir") + "/src/";
-        InputStream stream = new FileInputStream(root + "by/it/a_khmelev/lesson07/dataABC.txt");
+        InputStream stream = new FileInputStream(root + "by/it/group451051/yazhou/lesson07/dataABC.txt");
         C_EditDist instance = new C_EditDist();
         Scanner scanner = new Scanner(stream);
         System.out.println(instance.getDistanceEdinting(scanner.nextLine(),scanner.nextLine()));

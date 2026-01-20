@@ -116,25 +116,45 @@ public class A_Huffman {
         Scanner scanner = new Scanner(file);
         String s = scanner.next();
 
-        //все комментарии от тестового решения были оставлены т.к. это задание A.
-        //если они вам мешают их можно удалить
+        // Очищаем статические коды при каждом новом вызове
+        codes.clear();
 
-        Map<Character, Integer> count = new HashMap<>();
         //1. переберем все символы по очереди и рассчитаем их частоту в Map count
-            //для каждого символа добавим 1 если его в карте еще нет или инкремент если есть.
+        Map<Character, Integer> count = new HashMap<>();
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            count.put(c, count.getOrDefault(c, 0) + 1);
+        }
 
         //2. перенесем все символы в приоритетную очередь в виде листьев
         PriorityQueue<Node> priorityQueue = new PriorityQueue<>();
+        for (Map.Entry<Character, Integer> entry : count.entrySet()) {
+            priorityQueue.add(new LeafNode(entry.getValue(), entry.getKey()));
+        }
 
-        //3. вынимая по два узла из очереди (для сборки родителя)
-        //и возвращая этого родителя обратно в очередь
-        //построим дерево кодирования Хаффмана.
-        //У родителя частоты детей складываются.
+        //3. вынимая по два узла из очереди и возвращая родителя обратно
+        // строим дерево кодирования Хаффмана
+        while (priorityQueue.size() > 1) {
+            Node left = priorityQueue.poll();
+            Node right = priorityQueue.poll();
+            priorityQueue.add(new InternalNode(left, right));
+        }
 
-        //4. последний из родителей будет корнем этого дерева
-        //это будет последний и единственный элемент оставшийся в очереди priorityQueue.
+        //4. последний оставшийся узел - корень дерева
+        Node root = priorityQueue.poll();
+
+        // Если строка состоит из одного символа, обрабатываем особый случай
+        if (count.size() == 1) {
+            root.fillCodes("0");
+        } else {
+            root.fillCodes("");
+        }
+
+        //5. Кодируем исходную строку
         StringBuilder sb = new StringBuilder();
-        //.....
+        for (int i = 0; i < s.length(); i++) {
+            sb.append(codes.get(s.charAt(i)));
+        }
 
         return sb.toString();
         //01001100100111
@@ -145,7 +165,7 @@ public class A_Huffman {
 
     public static void main(String[] args) throws FileNotFoundException {
         String root = System.getProperty("user.dir") + "/src/";
-        File f = new File(root + "by/it/a_khmelev/lesson03/dataHuffman.txt");
+        File f = new File(root + "by/it/group451051//yazhou/lesson03/dataHuffman.txt");
         A_Huffman instance = new A_Huffman();
         long startTime = System.currentTimeMillis();
         String result = instance.encode(f);

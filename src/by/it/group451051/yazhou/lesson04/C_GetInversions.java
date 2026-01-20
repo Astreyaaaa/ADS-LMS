@@ -48,15 +48,62 @@ public class C_GetInversions {
         }
         int result = 0;
         //!!!!!!!!!!!!!!!!!!!!!!!!     тут ваше решение   !!!!!!!!!!!!!!!!!!!!!!!!
+        // Делаем копию массива, чтобы не изменять оригинал
+        int[] arr = a.clone();
+        int[] temp = new int[n];
 
+        // Вложенный класс для рекурсивного подсчета инверсий
+        class InversionCounter {
+            long countInversions(int[] arr, int[] temp, int left, int right) {
+                long invCount = 0;
+                if (left < right) {
+                    int mid = left + (right - left) / 2;
 
+                    // Считаем инверсии в левой половине
+                    invCount += countInversions(arr, temp, left, mid);
 
+                    // Считаем инверсии в правой половине
+                    invCount += countInversions(arr, temp, mid + 1, right);
 
+                    // Считаем инверсии при слиянии
+                    invCount += mergeAndCount(arr, temp, left, mid, right);
+                }
+                return invCount;
+            }
 
+            long mergeAndCount(int[] arr, int[] temp, int left, int mid, int right) {
+                int i = left;
+                int j = mid + 1;
+                int k = left;
+                long invCount = 0;
 
+                while (i <= mid && j <= right) {
+                    if (arr[i] <= arr[j]) {
+                        temp[k++] = arr[i++];
+                    } else {
+                        temp[k++] = arr[j++];
+                        invCount += (mid - i + 1);
+                    }
+                }
 
+                while (i <= mid) {
+                    temp[k++] = arr[i++];
+                }
 
+                while (j <= right) {
+                    temp[k++] = arr[j++];
+                }
 
+                for (i = left; i <= right; i++) {
+                    arr[i] = temp[i];
+                }
+
+                return invCount;
+            }
+        }
+
+        InversionCounter counter = new InversionCounter();
+        result = (int) counter.countInversions(arr, temp, 0, n - 1);
         //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
         return result;
     }
@@ -64,7 +111,7 @@ public class C_GetInversions {
 
     public static void main(String[] args) throws FileNotFoundException {
         String root = System.getProperty("user.dir") + "/src/";
-        InputStream stream = new FileInputStream(root + "by/it/a_khmelev/lesson04/dataC.txt");
+        InputStream stream = new FileInputStream(root + "by/it/group451051/yazhou/lesson04/dataC.txt");
         C_GetInversions instance = new C_GetInversions();
         //long startTime = System.currentTimeMillis();
         int result = instance.calc(stream);

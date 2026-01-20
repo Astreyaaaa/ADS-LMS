@@ -44,7 +44,39 @@ public class A_LIS {
         for (int i = 0; i < n; i++) {
             m[i] = scanner.nextInt();
         }
+
+        // массив для хранения длин наибольших возрастающих подпоследовательностей, заканчивающихся в каждой позиции
+        int[] dp = new int[n];
+
+        // Инициализация: каждая позиция - самостоятельная подпоследовательность длины 1
+        for (int i = 0; i < n; i++) {
+            dp[i] = 1;
+        }
+
+        // Заполнение массива dp: для каждого элемента проверяем все предыдущие
+        for (int i = 1; i < n; i++) {
+            for (int j = 0; j < i; j++) {
+                // Если предыдущий элемент меньше текущего, можем расширить подпоследовательность
+                if (m[j] < m[i]) {
+                    // Выбираем максимальную длину
+                    if (dp[j] + 1 > dp[i]) {
+                        dp[i] = dp[j] + 1;
+                    }
+                }
+            }
+        }
+
+        // Находим максимальную длину среди всех подпоследовательностей
         int result = 0;
+        for (int i = 0; i < n; i++) {
+            if (dp[i] > result) {
+                result = dp[i];
+            }
+        }
+
+        // Закрываем сканер для освобождения ресурсов
+        scanner.close();
+
         //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
         return result;
     }
@@ -52,7 +84,7 @@ public class A_LIS {
 
     public static void main(String[] args) throws FileNotFoundException {
         String root = System.getProperty("user.dir") + "/src/";
-        InputStream stream = new FileInputStream(root + "by/it/a_khmelev/lesson06/dataA.txt");
+        InputStream stream = new FileInputStream(root + "by/it/group451051/yazhou/lesson06/dataA.txt");
         A_LIS instance = new A_LIS();
         int result = instance.getSeqSize(stream);
         System.out.print(result);

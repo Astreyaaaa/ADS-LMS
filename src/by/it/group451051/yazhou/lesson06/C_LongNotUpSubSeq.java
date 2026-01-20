@@ -50,17 +50,78 @@ public class C_LongNotUpSubSeq {
             m[i] = scanner.nextInt();
         }
         //тут реализуйте логику задачи методами динамического программирования (!!!)
-        int result = 0;
+        scanner.close();
 
+        // tails[k] - последний элемент подпоследовательности длины k+1
+        int[] tails = new int[n];
+        // posInTails[k] - индекс элемента в массиве m, который лежит в tails[k]
+        int[] posInTails = new int[n];
+        // prev[i] - индекс предыдущего элемента для элемента m[i] в оптимальной подпоследовательности
+        int[] prev = new int[n];
+
+        // Инициализация
+        for (int i = 0; i < n; i++) {
+            prev[i] = -1;
+        }
+
+        int len = 0; // текущая длина наибольшей невозрастающей подпоследовательности
+
+        for (int i = 0; i < n; i++) {
+            int x = m[i];
+
+            // Бинарный поиск: ищем первый элемент tails, который меньше x
+            // Если все элементы >= x, то вставляем x в конец
+            int left = 0, right = len;
+            while (left < right) {
+                int mid = (left + right) / 2;
+                if (tails[mid] < x) {
+                    right = mid;
+                } else {
+                    left = mid + 1;
+                }
+            }
+
+            // left - позиция, куда вставляем x
+            tails[left] = x;
+            posInTails[left] = i;
+
+            // Устанавливаем ссылку на предыдущий элемент
+            if (left > 0) {
+                prev[i] = posInTails[left - 1];
+            }
+
+            // Если вставили в конец, увеличиваем длину
+            if (left == len) {
+                len++;
+            }
+        }
+
+        // Восстановление индексов подпоследовательности
+        int[] resultIndices = new int[len];
+        int currentIndex = posInTails[len - 1];
+
+        for (int i = len - 1; i >= 0; i--) {
+            resultIndices[i] = currentIndex;
+            currentIndex = prev[currentIndex];
+        }
+
+        // Вывод результата в требуемом формате
+        System.out.println(len);
+        for (int i = 0; i < len; i++) {
+            System.out.print((resultIndices[i] + 1) + " ");
+        }
+        System.out.println();
+
+        return len;
 
         //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
-        return result;
+
     }
 
 
     public static void main(String[] args) throws FileNotFoundException {
         String root = System.getProperty("user.dir") + "/src/";
-        InputStream stream = new FileInputStream(root + "by/it/a_khmelev/lesson06/dataC.txt");
+        InputStream stream = new FileInputStream(root + "by/it/group451051/yazhou/lesson06/dataC.txt");
         C_LongNotUpSubSeq instance = new C_LongNotUpSubSeq();
         int result = instance.getNotUpSeqSize(stream);
         System.out.print(result);

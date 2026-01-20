@@ -2,6 +2,7 @@ package by.it.group451051.yazhou.lesson02;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Comparator;
 /*
 даны интервальные события events
 реализуйте метод calcStartTimes, так, чтобы число принятых к выполнению
@@ -47,12 +48,34 @@ public class B_Sheduler {
         //начало и конец событий могут совпадать.
         List<Event> result;
         result = new ArrayList<>();
-        //ваше решение.
+        // Фильтруем события, которые попадают в заданный диапазон [from, to]
+        List<Event> filteredEvents = new ArrayList<>();
+        for (Event event : events) {
+            if (event.start >= from && event.stop <= to) {
+                filteredEvents.add(event);
+            }
+        }
 
+        // Если нет подходящих событий, возвращаем пустой список
+        if (filteredEvents.isEmpty()) {
+            return result;
+        }
 
+        // Сортируем события по времени окончания (по возрастанию)
+        filteredEvents.sort(Comparator.comparingInt(e -> e.stop));
 
+        // Жадный алгоритм: выбираем события, которые заканчиваются раньше всего
+        int lastEndTime = filteredEvents.get(0).stop;
+        result.add(filteredEvents.get(0));
 
-
+        for (int i = 1; i < filteredEvents.size(); i++) {
+            Event currentEvent = filteredEvents.get(i);
+            // Если текущее событие начинается после окончания последнего выбранного
+            if (currentEvent.start >= lastEndTime) {
+                result.add(currentEvent);
+                lastEndTime = currentEvent.stop;
+            }
+        }
 
         return result;                        //вернем итог
     }
